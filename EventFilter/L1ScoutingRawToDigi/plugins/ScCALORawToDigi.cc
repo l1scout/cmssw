@@ -1,8 +1,7 @@
 #include "EventFilter/L1ScoutingRawToDigi/plugins/ScCALORawToDigi.h"
 
 ScCaloRawToDigi::ScCaloRawToDigi(const edm::ParameterSet& iConfig) {
-  using namespace edm;
-  using namespace l1ScoutingRun3;
+
   srcInputTag_ = iConfig.getParameter<InputTag>("srcInputTag");
   enableAllSums_ = iConfig.getParameter<bool>("enableAllSums");
   debug_ = iConfig.getUntrackedParameter<bool>("debug", false);
@@ -87,7 +86,6 @@ void ScCaloRawToDigi::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 }
 
 void ScCaloRawToDigi::unpackOrbitFromDMA(edm::Handle<SDSRawDataCollection>& ScoutingRawDataCollection, int sourceId) {
-  using namespace l1ScoutingRun3;
 
   const FEDRawData& sourceRawData = ScoutingRawDataCollection->FEDData(sourceId);
   if ((sourceRawData.size() == 0) && debug_) {

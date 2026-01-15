@@ -1,7 +1,6 @@
 #include "EventFilter/L1ScoutingRawToDigi/plugins/ScCaloTowerRawToDigi.h"
 
 ScCaloTowerRawToDigi::ScCaloTowerRawToDigi(const edm::ParameterSet& iConfig) {
-  using namespace edm;
   srcInputTag_ = iConfig.getParameter<InputTag>("srcInputTag");
   sourceIdList_ = iConfig.getParameter<std::vector<int>>("sourceIdList");
   debug_ = iConfig.getUntrackedParameter<bool>("debug", false);
@@ -20,7 +19,6 @@ ScCaloTowerRawToDigi::ScCaloTowerRawToDigi(const edm::ParameterSet& iConfig) {
 ScCaloTowerRawToDigi::~ScCaloTowerRawToDigi() {}
 
 void ScCaloTowerRawToDigi::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-  using namespace edm;
 
   Handle<SDSRawDataCollection> ScoutingRawDataCollection;
   iEvent.getByToken(rawToken_, ScoutingRawDataCollection);
@@ -37,7 +35,7 @@ void ScCaloTowerRawToDigi::produce(edm::Event& iEvent, const edm::EventSetup& iS
     size_t orbitSize = sourceRawData.size();
 
     if ((sourceRawData.size() == 0) && debug_) {
-      std::cout << "No raw data for CaloTower FED " << sdsId << std::endl;
+      edm::LogDebug("L1Scout") << "No raw data for CaloTower FED " << sdsId << std::endl;
     }
 
     // unpack current orbit and store data into the orbitBufferr
@@ -52,7 +50,6 @@ void ScCaloTowerRawToDigi::produce(edm::Event& iEvent, const edm::EventSetup& iS
 }
 
 void ScCaloTowerRawToDigi::unpackOrbit(const unsigned char* buf, size_t len, int sdsId) {
-  using namespace l1ScoutingRun3;
 
   // reset counters
   nCaloTowersOrbit_ = 0;
@@ -75,7 +72,7 @@ void ScCaloTowerRawToDigi::unpackOrbit(const unsigned char* buf, size_t len, int
     pos += 12;  // header
 
     if (debug_) {
-      std::cout << " CaloTower #" << sdsId << " Orbit " << orbit << ", BX -> " << bx << ", nCaloTowers -> " << ctCount
+      LogDebug("L1Scout") << " CaloTower #" << sdsId << " Orbit " << orbit << ", BX -> " << bx << ", nCaloTowers -> " << ctCount
                 << std::endl;
     }
 
@@ -99,12 +96,13 @@ void ScCaloTowerRawToDigi::unpackOrbit(const unsigned char* buf, size_t len, int
       nCaloTowersOrbit_++;
 
       if (debug_) {
-        std::cout << "Calo Tower " << i << ", raw: 0x" << std::hex << ct_raw << std::dec << std::endl;
-        std::cout << "\tET: " << ET << std::endl;
-        std::cout << "\tER bits: " << erBits << std::endl;
-        std::cout << "\tMisc bits: " << miscBits << std::endl;
-        std::cout << "\tEta: " << eta << std::endl;
-        std::cout << "\tPhi: " << phi << std::endl;
+        edm::LogDebug("L1Scout")
+        << "Calo Tower " << i << ", raw: 0x" << std::hex << ct_raw << std::dec << std::endl
+        << "\tET: " << ET << std::endl
+        << "\tER bits: " << erBits << std::endl
+        << "\tMisc bits: " << miscBits << std::endl
+        << "\tEta: " << eta << std::endl
+         < "\tPhi: " << phi << std::endl;
       }
     }
 
